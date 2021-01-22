@@ -17,6 +17,81 @@ app.use(function (req, res, next) {
     next();
 });
 
+let verifySession = (req, res, next) => {
+    let refreshToken = req.header('x-header-token');
+    let _id = req.header('_id');
+
+    User.findByIdAndToken(_id, token).then((user) => {
+        if (!user) {
+            return Promise.reject({
+                'error': 'User not found. Make sure that the refresh token and user id are correct'
+            });
+        }
+
+        req.user_id = user._id;
+        req.userObject = user;
+        req.refreshToken = refreshToken;
+
+        let isSessionValid = false;
+
+        user.sessions.forEach((session) => {
+            if (session.token === refreshToken) {
+                if (User.hasRefreshTokenExpired(session.expiresAt) === false) {
+                    isSessionValid = true;
+                }
+            }
+        });
+
+        if (isSessionValid) {
+            next();
+        } else {
+            return Promise.reject({
+                'error': 'Refresh token has expired or the session is invalid'
+            })
+        }
+
+    }).catch((e) => {
+        res.status(401).send(e);
+    })
+}
+
+// app.use((req, res, next) => {
+//     let refreshToken = req.header('x-header-token');
+//     let _id = req.header('_id');
+
+//     User.findByIdAndToken(_id, token).then((user) => {
+//         if (!user) {
+//             return Promise.reject({
+//                 'error': 'User not found. Make sure that the refresh token and user id are correct'
+//             });
+//         }
+
+//         req.user_id = user._id;
+//         req.refreshToken = refreshToken;
+
+//         let isSessionValid = false;
+
+//         user.sessions.forEach((session) => {
+//             if (session.token === refreshToken) {
+//                 if (User.hasRefreshTokenExpired(session.expiresAt) === false) {
+//                     isSessionValid = true;
+//                 }
+//             }
+//         });
+
+//         if (isSessionValid) {
+//             next();
+//         } else {
+//             return Promise.reject({
+//                 'error': 'Refresh token has expired or the session is invalid'
+//             })
+//         }
+
+//     }).catch((e) => {
+//         res.status(401).send(e);
+//     })
+// });
+
 
 app.get('/lists', (req, res) => {
     List.find({}).then((lists) => {
@@ -133,13 +208,20 @@ app.post('/users/login', (req, res) => {
             res
                 .header('x-refresh-token', authTokens.refreshToken)
                 .header('x-access-token', authTokens.accessToken)
-                .send(newUser);
+                .send(user);
         })
     }).catch((e) => {
         res.status(400).send(e);
     });
 })
 
+app.get('users/me/access-token', verifySession, (req, res) => {
+    req.userObject.generateAccessAuthToken.then((accessToken) => {
+        res.header('x-access-token', accessToken).send({ accessToken });
+    }).catch((e) => {
+        res.status(400).send(e);
+    });
+})
 
 app.listen(3000, () => {
     console.log("Server is listening on port 3000");
