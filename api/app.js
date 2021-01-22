@@ -109,10 +109,10 @@ app.post('/users', (req, res) => {
         return newUser.generateAccessAuthToken().then((accessToken) => {
             return { accessToken, refreshToken }
         });
-    }).then((authToken) => {
+    }).then((authTokens) => {
         res
-            .header('x-refresh-token', authToken.refreshToken)
-            .header('x-access-token', authToken.accessToken)
+            .header('x-refresh-token', authTokens.refreshToken)
+            .header('x-access-token', authTokens.accessToken)
             .send(newUser);
     }).catch((e) => {
         res.status(400).send(e);
