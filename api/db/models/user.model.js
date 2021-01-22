@@ -3,6 +3,7 @@ const _ = require('lodash');
 const jwt = require('jsonwebtoken');
 const jwtSecret = "00111591611510489533asvsdjfaoslvkfgs9709481138";
 const crypto = require('crypto');
+const bcrypt = require('bcryptjs');
 
 const UserSchema = new mongoose.Schema({
     email: {
@@ -71,6 +72,26 @@ UserSchema.methods.createSession = function () {
         return Promise.reject('Failed to save session to database. \n' + e);
     })
 }
+
+UserSchema.statics.findByIdAndToken = function (_id, token) {
+    const User = this;
+    return User.findOne({
+        _id,
+        'session.token': sessions.token
+    });
+}
+
+UserSchema.statics.findByCredentials = function (email, password) {
+    let User = this;
+
+}
+
+
+UserSchema.pre('save', function (next) {
+    let user = this;
+
+});
+
 
 let saveSessionToDatabase = (user, refreshToken) => {
     return new Promise((resolve, reject) => {
