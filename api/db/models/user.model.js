@@ -77,7 +77,7 @@ UserSchema.statics.findByIdAndToken = function (_id, token) {
     const User = this;
     return User.findOne({
         _id,
-        'session.token': sessions.token
+        'sessions.token': sessions.token
     });
 }
 

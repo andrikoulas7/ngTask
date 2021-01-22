@@ -21,7 +21,7 @@ let verifySession = (req, res, next) => {
     let refreshToken = req.header('x-header-token');
     let _id = req.header('_id');
 
-    User.findByIdAndToken(_id, token).then((user) => {
+    User.findByIdAndToken(_id, refreshToken).then((user) => {
         if (!user) {
             return Promise.reject({
                 'error': 'User not found. Make sure that the refresh token and user id are correct'
