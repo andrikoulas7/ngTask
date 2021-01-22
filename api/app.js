@@ -120,6 +120,27 @@ app.post('/users', (req, res) => {
 })
 
 
+app.post('/users/login', (req, res) => {
+    let email = req.body.email;
+    let password = req.body.password;
+
+    User.findByCredentials(email, password).then((user) => {
+        return user.createSession().then((refreshToken) => {
+            return user.generateAccessAuthToken().then((accessToken) => {
+                return { accessToken, refreshToken }
+            });
+        }).then((authTokens) => {
+            res
+                .header('x-refresh-token', authTokens.refreshToken)
+                .header('x-access-token', authTokens.accessToken)
+                .send(newUser);
+        })
+    }).catch((e) => {
+        res.status(400).send(e);
+    });
+})
+
+
 app.listen(3000, () => {
     console.log("Server is listening on port 3000");
 })
