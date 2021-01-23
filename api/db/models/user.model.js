@@ -73,6 +73,10 @@ UserSchema.methods.createSession = function () {
     })
 }
 
+UserSchema.statics.getJWTSecret = () => {
+    return jwtSecret;
+}
+
 UserSchema.statics.findByIdAndToken = function (_id, token) {
     const User = this;
     return User.findOne({

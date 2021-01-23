@@ -6,6 +6,7 @@ const { mongoose } = require('./db/mongoose');
 const bodyParser = require('body-parser');
 
 const { List, Task, User } = require('./db/models');
+const jwt = require('jsonwebtoken');
 
 app.use(bodyParser.json());
 
@@ -22,6 +23,19 @@ app.use(function (req, res, next) {
 
     next();
 });
+
+let authenticate = (req, res, next) => {
+    let token = req.header('x-access-token');
+
+    jwt.verify(token, User.getJWTSecret(), (err, decoded) => {
+        if (err) {
+            res.status(401).send(err);
+        } else {
+            req.user_id = decoded._id;
+            next();
+        }
+    });
+}
 
 let verifySession = (req, res, next) => {
     let refreshToken = req.header('x-header-token');
@@ -61,47 +75,13 @@ let verifySession = (req, res, next) => {
     })
 }
 
-// app.use((req, res, next) => {
-//     let refreshToken = req.header('x-header-token');
-//     let _id = req.header('_id');
-
-//     User.findByIdAndToken(_id, token).then((user) => {
-//         if (!user) {
-//             return Promise.reject({
-//                 'error': 'User not found. Make sure that the refresh token and user id are correct'
-//             });
-//         }
-
-//         req.user_id = user._id;
-//         req.refreshToken = refreshToken;
-
-//         let isSessionValid = false;
-
-//         user.sessions.forEach((session) => {
-//             if (session.token === refreshToken) {
-//                 if (User.hasRefreshTokenExpired(session.expiresAt) === false) {
-//                     isSessionValid = true;
-//                 }
-//             }
-//         });
-
-//         if (isSessionValid) {
-//             next();
-//         } else {
-//             return Promise.reject({
-//                 'error': 'Refresh token has expired or the session is invalid'
-//             })
-//         }
-
-//     }).catch((e) => {
-//         res.status(401).send(e);
-//     })
-// });
-
-
-app.get('/lists', (req, res) => {
-    List.find({}).then((lists) => {
+app.get('/lists', authenticate, (req, res) => {
+    List.find({
+        _userId: req.user_id
+    }).then((lists) => {
         res.send(lists);
+    }).catch((e) => {
+        res.send(e);
     })
 })
 
