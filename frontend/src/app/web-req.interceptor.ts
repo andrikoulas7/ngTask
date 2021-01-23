@@ -2,6 +2,7 @@ import { HttpErrorResponse, HttpHandler, HttpInterceptor, HttpRequest } from '@a
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { AuthService } from './auth.service';
+import { catchError } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
