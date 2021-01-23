@@ -12,7 +12,7 @@ export class AuthService {
   constructor(private webService: WebRequestService, private router: Router) { }
 
   login(email: string, password: string) {
-    this.webService.login(email, password).pipe(
+    return this.webService.login(email, password).pipe(
       shareReplay(),
       tap((res: HttpResponse<any>) => {
         this.setSession(res.body._id, res.headers.get('x-access-token'), res.headers.get('x-refreshToken'));
@@ -36,6 +36,18 @@ export class AuthService {
 
   logout() {
     this.removeSession();
+  }
+
+  setAccessToken(accessToken: string) {
+    localStorage.setItem('x-access-token', accessToken)
+  }
+
+  getAccessToken() {
+    return localStorage.getItem('x-access-item');
+  }
+
+  getRefreshToken() {
+    return localStorage.getItem('x-refresh-token');
   }
 
 }
