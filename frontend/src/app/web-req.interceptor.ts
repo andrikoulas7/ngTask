@@ -11,14 +11,16 @@ export class WebReqInterceptor implements HttpInterceptor {
 
   constructor(private authService: AuthService) { }
 
+  refreshingAccessToken: boolean;
+
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<any> {
     request = this.addAuthHeader(request);
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
 
-        if (error.status === 401) {
+        if (error.status === 401 && !this.refreshingAccessToken) {
           //if unauthorized refresh the access token
-          this.refreshAccessToken()
+          return this.refreshAccessToken()
             .pipe(
               switchMap(() => {
                 request = this.addAuthHeader(request);
@@ -37,8 +39,10 @@ export class WebReqInterceptor implements HttpInterceptor {
   }
 
   refreshAccessToken() {
+    this.refreshingAccessToken = true;
     return this.authService.getNewAccesToken().pipe(
       tap(() => {
+        this.refreshingAccessToken = false;
         console.log("Access Token Refreshed!");
 
       })

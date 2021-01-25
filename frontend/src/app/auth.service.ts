@@ -21,6 +21,18 @@ export class AuthService {
     )
   }
 
+  signup(email: string, password: string) {
+    return this.webService.signup(email, password).pipe(
+      shareReplay(),
+      tap((res: HttpResponse<any>) => {
+        this.setSession(res.body._id, res.headers.get('x-access-token'), res.headers.get('x-refreshToken'));
+        console.log("Signed up successfully");
+
+      })
+    )
+  }
+
+
   private setSession(userId: string, accessToken: string, refreshToken: string) {
     localStorage.setItem('user-id', userId);
     localStorage.setItem('x-access-token', accessToken);
@@ -61,8 +73,13 @@ export class AuthService {
       headers: {
         'x-refresh-token': this.getRefreshToken(),
         '_id': this.getUserId()
-      }
-    })
+      },
+      observe: 'response'
+    }).pipe(
+      tap((res: HttpResponse<any>) => {
+        this.setAccessToken(res.headers.get('x-access-token'));
+      })
+    )
   }
 
 }
