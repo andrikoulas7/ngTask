@@ -22,20 +22,23 @@
                         Tasks
                     </h1>
 
-                    <div class="dropdown is-hoverable">
+                    <div class="dropdown is-hoverable is-right">
                         <div class="dropdown-trigger">
                             <button class="button" aria-haspopup="true">
-                                <span>Hover me</span>
+                                <!-- <span>Settings</span> -->
                                 <span class="icon is-small">
-                                    <i class="fas fa-angle-down" aria-hidden="true"></i>
+                                    <i class="fas fa-cog" aria-hidden="true"></i>
                                 </span>
                             </button>
                         </div>
                         <div class="dropdown-menu" id="dropdown-menu4" role="menu">
                             <div class="dropdown-content">
-                                <div class="dropdown-item">
-                                    <p>You can insert <strong>any type of content</strong> within the dropdown menu.</p>
-                                </div>
+                                <a href="#" class="dropdown-item">
+                                    Edit
+                                </a>
+                                <a (click)="onDeleteListClick()" class="dropdown-item has-text-danger">
+                                    Delete
+                                </a>
                             </div>
                         </div>
                     </div>
