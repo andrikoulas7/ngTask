@@ -72,10 +72,12 @@
 }
 
 .task {
+    display: flex;
     background: white;
     padding: 15px 20px;
     border-radius: 5px;
     margin-top: 10px;
+    align-items: center;
     transition: box-shadow 0.2s ease, transform 0.2s ease;
     
     &:not(.complete){
@@ -88,12 +90,28 @@
 
         &:hover{
             box-shadow: 0 0 0 5px #eee;
+
+            .task-buttons{
+                opacity: 1;
+                transform: scale(1);
+            }
         }
     }
 
-    &.completed{
+    &.completed .task-text{
         text-decoration: line-through;
         opacity: 0.8;
+    }
+
+    .task-text{
+        flex-grow: 1;
+        display: flex;
+    }
+
+    .task-buttons{
+        opacity: 0;
+        transition: opacity 0.2s, transform 0.2s;
+        transform: scale(0.85);
     }
 }
 
