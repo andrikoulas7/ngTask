@@ -13,6 +13,11 @@ export class TaskService {
     return this.webReqService.post('lists', { title });
   }
 
+  updateList(id: string, title: string) {
+    return this.webReqService.patch(`lists/${id}`, { title });
+  }
+
+
   createTask(title: string, listId: string) {
     return this.webReqService.post(`lists/${listId}/tasks`, { title });
   }

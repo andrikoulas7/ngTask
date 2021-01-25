@@ -33,7 +33,7 @@
                         </div>
                         <div class="dropdown-menu" id="dropdown-menu4" role="menu">
                             <div class="dropdown-content">
-                                <a href="#" class="dropdown-item">
+                                <a [routerLink]="['/edit-list', selectedListId]" class="dropdown-item">
                                     Edit
                                 </a>
                                 <a (click)="onDeleteListClick()" class="dropdown-item has-text-danger">
