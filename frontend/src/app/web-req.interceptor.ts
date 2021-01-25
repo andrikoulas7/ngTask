@@ -30,7 +30,6 @@ export class WebReqInterceptor implements HttpInterceptor {
                 return empty();
               })
             )
-          this.authService.logout();
         }
         return throwError(error);
       })
