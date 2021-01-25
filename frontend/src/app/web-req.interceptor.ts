@@ -15,7 +15,14 @@ export class WebReqInterceptor implements HttpInterceptor {
     request = this.addAuthHeader(request);
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
+
+        if (error.status === 401) {
+          //if unauthorized refresh the access token
+          this.authService.logout();
+        }
+
         return throwError(error);
+
       })
     )
   }

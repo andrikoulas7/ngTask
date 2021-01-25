@@ -36,6 +36,8 @@ export class AuthService {
 
   logout() {
     this.removeSession();
+
+    this.router.navigate(['/login']);
   }
 
   setAccessToken(accessToken: string) {
