@@ -2,14 +2,14 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { WebRequestService } from './web-request.service';
 import { shareReplay, tap } from 'rxjs/operators';
-import { HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  constructor(private webService: WebRequestService, private router: Router) { }
+  constructor(private webService: WebRequestService, private router: Router, private http: HttpClient) { }
 
   login(email: string, password: string) {
     return this.webService.login(email, password).pipe(
@@ -50,6 +50,19 @@ export class AuthService {
 
   getRefreshToken() {
     return localStorage.getItem('x-refresh-token');
+  }
+
+  getUserId() {
+    return localStorage.getItem('user-id');
+  }
+
+  getNewAccesToken() {
+    return this.http.get(`${this.webService.ROOT_URL}/users/me/access-token`, {
+      headers: {
+        'x-refresh-token': this.getRefreshToken(),
+        '_id': this.getUserId()
+      }
+    })
   }
 
 }
