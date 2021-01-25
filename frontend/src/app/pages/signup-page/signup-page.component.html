@@ -19,7 +19,7 @@
                 </span>
             </p>
         </div>
-        <div class="field is-pulled-right">
+        <div class="field" style="display: flex; justify-content: flex-end;">
             <p class="control">
                 <button class="button is-success has-text-white"
                     (click)="onSignupButtonClicked(emailInput.value, pwInput.value)">
@@ -27,5 +27,9 @@
                 </button>
             </p>
         </div>
+        <br>
+        <p class="has-text-grey">Already got an account? <a routerLink="/login">Log in</a></p>
+
+
     </div>
 </div>
